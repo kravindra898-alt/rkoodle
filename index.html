@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RKoodle - Your LMS. Your Cloud.</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
@@ -30,6 +31,7 @@ footer{text-align:center;padding:25px;color:#667}
 @media(max-width:500px){.hero h1{font-size:30px}header{padding:18px}.plan{width:100%}}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -47,6 +49,7 @@ footer{text-align:center;padding:25px;color:#667}
 </section>
 
 <div class="container" id="plans">
+
   <div class="plans">
     <div class="plan">
       <h2>Free Plan</h2>
@@ -54,6 +57,7 @@ footer{text-align:center;padding:25px;color:#667}
       <p>5 GB Storage</p>
       <p>Explore RKoodle</p>
     </div>
+
     <div class="plan">
       <h2>Pro Plan</h2>
       <div class="price">$50/year</div>
@@ -63,6 +67,7 @@ footer{text-align:center;padding:25px;color:#667}
   </div>
 
   <div class="account" id="account">
+
     <div class="tabs">
       <button id="signupTab" class="active" type="button">Sign Up</button>
       <button id="signinTab" type="button">Sign In</button>
@@ -84,13 +89,18 @@ footer{text-align:center;padding:25px;color:#667}
     </form>
 
     <div id="message" role="status"></div>
-    <button id="logoutButton" class="action hidden" type="button" style="margin-top:12px">Sign Out</button>
+
+    <button id="logoutButton" class="action hidden" type="button" style="margin-top:12px">
+      Sign Out
+    </button>
+
   </div>
 </div>
 
 <footer>© 2026 RKoodle. Your LMS. Your Cloud.</footer>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
@@ -128,16 +138,17 @@ function showMessage(text, success = false) {
 
 function readableError(error) {
   const errors = {
-    "auth/email-already-in-use": "This email is already registered. Please sign in.",
-    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/email-already-in-use": "Email already registered. Please sign in.",
+    "auth/invalid-email": "Please enter a valid email.",
     "auth/weak-password": "Password must contain at least 6 characters.",
     "auth/invalid-credential": "Incorrect email or password.",
     "auth/too-many-requests": "Too many attempts. Try again later.",
-    "auth/network-request-failed": "Internet connection problem. Try again.",
-    "auth/api-key-not-valid": "Firebase API Key is invalid. Check Firebase Project Settings."
+    "auth/network-request-failed": "Internet connection problem. Try again."
   };
   return errors[error.code] || error.message;
 }
+
+// Signup and Signin tabs
 
 document.getElementById("signupTab").onclick = () => {
   signupForm.classList.remove("hidden");
@@ -155,10 +166,13 @@ document.getElementById("signinTab").onclick = () => {
   showMessage("");
 };
 
+// Create Account
+
 signupForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
   signupButton.disabled = true;
-  showMessage("Creating your account...");
+  showMessage("Creating your account...", true);
 
   try {
     const name = document.getElementById("fullName").value.trim();
@@ -166,44 +180,66 @@ signupForm.addEventListener("submit", async (event) => {
     const password = document.getElementById("signupPassword").value;
 
     const result = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(result.user, {displayName: name});
 
-    signupForm.reset();
-    showMessage("Account created successfully!", true);
+    await updateProfile(result.user, {
+      displayName: name
+    });
+
+    showMessage("Account created successfully! Redirecting to Dashboard...", true);
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1000);
+
   } catch (error) {
     showMessage(readableError(error));
-  } finally {
     signupButton.disabled = false;
   }
 });
 
+// Login
+
 signinForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
   signinButton.disabled = true;
-  showMessage("Signing in...");
+  showMessage("Signing in...", true);
 
   try {
     const email = document.getElementById("signinEmail").value.trim();
     const password = document.getElementById("signinPassword").value;
 
     await signInWithEmailAndPassword(auth, email, password);
-    signinForm.reset();
-    showMessage("Login successful!", true);
+
+    showMessage("Login successful! Redirecting to Dashboard...", true);
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1000);
+
   } catch (error) {
     showMessage(readableError(error));
-  } finally {
     signinButton.disabled = false;
   }
 });
 
+// Check existing login
+
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    showMessage("Signed in as " + (user.displayName || user.email), true);
-    logoutButton.classList.remove("hidden");
-  } else {
-    logoutButton.classList.add("hidden");
+
+  const currentPage = window.location.pathname;
+
+  if (user && currentPage.endsWith("/index.html")) {
+    window.location.href = "dashboard.html";
   }
+
+  if (user && currentPage.endsWith("/rkoodle/")) {
+    window.location.href = "dashboard.html";
+  }
+
 });
+
+// Sign Out
 
 logoutButton.addEventListener("click", async () => {
   try {
@@ -213,6 +249,7 @@ logoutButton.addEventListener("click", async () => {
     showMessage(readableError(error));
   }
 });
+
 </script>
 
 </body>
