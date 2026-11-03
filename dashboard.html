@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>RKoodle Customer Dashboard</title>
 
 <style>
@@ -27,10 +26,7 @@ header{
   gap:12px;
 }
 
-.logo{
-  font-size:25px;
-  font-weight:bold;
-}
+.logo{font-size:25px;font-weight:bold}
 
 .logout{
   background:#e74c3c;
@@ -39,11 +35,6 @@ header{
   padding:11px 20px;
   border-radius:6px;
   cursor:pointer;
-  font-size:15px;
-}
-
-.logout:disabled{
-  opacity:.6;
 }
 
 .container{
@@ -60,30 +51,23 @@ header{
   margin-bottom:25px;
 }
 
-.welcome h1{
-  margin-top:0;
-}
-
 .cards{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:20px;
 }
 
-.card{
+.card,.section{
   background:white;
-  padding:25px;
+  padding:24px;
   border-radius:12px;
   box-shadow:0 4px 15px #00000010;
 }
 
-.card h3{
-  color:#1766a5;
-  margin-top:0;
-}
+.card h3,.section h2{color:#1766a5;margin-top:0}
 
 .number{
-  font-size:28px;
+  font-size:27px;
   font-weight:bold;
   margin:15px 0;
 }
@@ -98,7 +82,7 @@ header{
 .progress-fill{
   background:#1766a5;
   height:100%;
-  width:20%;
+  width:0%;
 }
 
 .action{
@@ -114,8 +98,42 @@ header{
   margin-top:15px;
 }
 
+.action:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.section{margin-top:25px}
+
+input,select{
+  width:100%;
+  padding:13px;
+  margin:8px 0 16px;
+  border:1px solid #ccd5e0;
+  border-radius:6px;
+  font-size:15px;
+  background:white;
+}
+
+label{font-weight:bold;font-size:14px}
+
+.site-card{
+  border:1px solid #dce4ee;
+  border-radius:9px;
+  padding:18px;
+  margin-top:15px;
+  overflow-wrap:anywhere;
+}
+
+.site-card h3{margin-top:0;color:#1766a5}
+
 .status{
   color:#168447;
+  font-weight:bold;
+}
+
+.pending{
+  color:#a56b00;
   font-weight:bold;
 }
 
@@ -127,6 +145,19 @@ header{
   border-radius:5px;
   line-height:1.6;
 }
+
+.message{
+  padding:12px;
+  border-radius:6px;
+  margin-top:12px;
+  display:none;
+  line-height:1.5;
+}
+
+.success{background:#e5f7eb;color:#176b36}
+.error{background:#fdeaea;color:#a32121}
+
+.muted{color:#68758a;font-size:13px}
 
 footer{
   text-align:center;
@@ -140,9 +171,7 @@ footer{
   font-size:18px;
 }
 
-.hidden{
-  display:none;
-}
+.hidden{display:none!important}
 
 @media(max-width:500px){
   header{padding:16px}
@@ -164,56 +193,104 @@ footer{
 
 <main class="container">
 
-  <section class="welcome">
-    <h1>Welcome, <span id="customerName">Customer</span>!</h1>
-    <p>Your personal learning platform dashboard.</p>
-    <p>Email: <span id="customerEmail"></span></p>
-  </section>
+<section class="welcome">
+  <h1>Welcome, <span id="customerName">Customer</span>!</h1>
+  <p>Your personal learning platform dashboard.</p>
+  <p>Email: <span id="customerEmail"></span></p>
+</section>
 
-  <section class="cards">
+<section class="cards">
 
-    <div class="card">
-      <h3>My Current Plan</h3>
-      <div class="number">Free</div>
-      <p>5 GB Storage</p>
-      <p class="status">Active Demo Plan</p>
-    </div>
-
-    <div class="card">
-      <h3>Storage Usage</h3>
-      <div class="number">1 GB / 5 GB</div>
-      <div class="progress">
-        <div class="progress-fill"></div>
-      </div>
-      <p>20% used (Demo figure)</p>
-    </div>
-
-    <div class="card">
-      <h3>Additional Storage</h3>
-      <div class="number">20 GB</div>
-      <p>$50 / year</p>
-      <button class="action" id="storageButton">
-        Buy Extra Storage
-      </button>
-    </div>
-
-    <div class="card">
-      <h3>My Website</h3>
-      <div class="number">Not Created</div>
-      <p>Your Moodle website will appear here.</p>
-      <button class="action" id="createWebsiteButton">
-        Create My Website
-      </button>
-    </div>
-
-  </section>
-
-  <div class="note">
-    <strong>Important:</strong>
-    This is your RKoodle demo dashboard.
-    Your actual Moodle website, storage allocation,
-    payment and hosting services are not connected yet.
+  <div class="card">
+    <h3>My Current Plan</h3>
+    <div class="number">Free</div>
+    <p>5 GB Storage</p>
+    <p class="status">Active Demo Plan</p>
   </div>
+
+  <div class="card">
+    <h3>Storage Usage</h3>
+    <div class="number">0 GB / 5 GB</div>
+    <div class="progress">
+      <div class="progress-fill"></div>
+    </div>
+    <p class="muted">Demo display only. Actual storage is not allocated.</p>
+  </div>
+
+  <div class="card">
+    <h3>Additional Storage</h3>
+    <div class="number">20 GB</div>
+    <p>$50 / year</p>
+    <button class="action" id="storageButton">
+      Buy Extra Storage
+    </button>
+  </div>
+
+  <div class="card">
+    <h3>My Websites</h3>
+    <div class="number"><span id="siteCount">0</span> / 3</div>
+    <p>Maximum 3 websites per customer.</p>
+    <p class="status">Website Limit</p>
+  </div>
+
+</section>
+
+<section class="section">
+  <h2>Create My Moodle Website</h2>
+  <p class="muted">You can create up to 3 website requests using your account.</p>
+
+  <form id="websiteForm">
+
+    <label for="websiteName">Website Name</label>
+    <input
+      id="websiteName"
+      type="text"
+      maxlength="60"
+      placeholder="Example: My Online Academy"
+      required
+    >
+
+    <label for="siteSlug">Preferred Website Address Name</label>
+    <input
+      id="siteSlug"
+      type="text"
+      maxlength="40"
+      placeholder="my-online-academy"
+      pattern="[a-z0-9-]+"
+      required
+    >
+    <p class="muted">Only lowercase letters, numbers and hyphens. This is a preferred name, not an active website address.</p>
+
+    <label for="region">Server Location</label>
+    <select id="region" required>
+      <option value="EU">EU (Europe)</option>
+      <option value="USA">USA</option>
+    </select>
+
+    <button class="action" id="createButton" type="submit">
+      Create My Website
+    </button>
+
+  </form>
+
+  <div id="formMessage" class="message"></div>
+</section>
+
+<section class="section">
+  <h2>My Websites</h2>
+  <p class="muted">Your website requests are listed separately below.</p>
+  <div id="websiteList">
+    <p>Loading websites...</p>
+  </div>
+</section>
+
+<div class="note">
+  <strong>Important:</strong>
+  This is the RKoodle demo platform. Website requests are saved in Firebase.
+  Actual Moodle installation, live domain, separate Moodle databases,
+  file storage, payments and automatic hosting are not connected yet.
+  Storage figures shown here are demo figures only.
+</div>
 
 </main>
 
@@ -225,15 +302,24 @@ footer{
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getAuth,
   onAuthStateChanged,
   signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Firebase Configuration
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  runTransaction,
+  serverTimestamp
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDf20ZFbqmc9kjUbzT8H36WYUKLRI6i_t4",
@@ -244,39 +330,229 @@ const firebaseConfig = {
   appId: "1:526883526247:web:24979b028769dae25066c2"
 };
 
-// Initialize Firebase
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const loading = document.getElementById("loading");
 const dashboard = document.getElementById("dashboard");
 const logoutButton = document.getElementById("logoutButton");
+const websiteForm = document.getElementById("websiteForm");
+const createButton = document.getElementById("createButton");
+const websiteList = document.getElementById("websiteList");
+const formMessage = document.getElementById("formMessage");
 
-// Check Login Status
+let currentUser = null;
 
-onAuthStateChanged(auth, (user) => {
+function showMessage(message, type) {
+  formMessage.textContent = message;
+  formMessage.className = "message " + type;
+  formMessage.style.display = "block";
+}
 
-  if (user) {
+function hideMessage() {
+  formMessage.style.display = "none";
+}
 
-    document.getElementById("customerName").textContent =
-      user.displayName || "Customer";
+function getWebsiteRef() {
+  return doc(db, "websites", currentUser.uid);
+}
 
-    document.getElementById("customerEmail").textContent =
-      user.email || "";
+function renderWebsites(sites) {
 
-    loading.classList.add("hidden");
-    dashboard.classList.remove("hidden");
+  document.getElementById("siteCount").textContent = sites.length;
 
-  } else {
+  websiteList.innerHTML = "";
 
-    window.location.replace("./");
-
+  if (sites.length === 0) {
+    websiteList.innerHTML =
+      "<p>No websites created yet. Create your first website request above.</p>";
+    return;
   }
 
+  sites.forEach((site, index) => {
+
+    const card = document.createElement("div");
+    card.className = "site-card";
+
+    const title = document.createElement("h3");
+    title.textContent = "Website " + (index + 1) + ": " + site.websiteName;
+
+    const address = document.createElement("p");
+    address.textContent = "Preferred Name: " + site.siteSlug;
+
+    const region = document.createElement("p");
+    region.textContent = "Server Location: " + site.region;
+
+    const status = document.createElement("p");
+    status.className = "pending";
+    status.textContent = "Request Saved - Installation Pending";
+
+    const info = document.createElement("p");
+    info.className = "muted";
+    info.textContent =
+      "This is a saved request. Your Moodle website is not live yet.";
+
+    card.append(title, address, region, status, info);
+    websiteList.appendChild(card);
+  });
+
+  if (sites.length >= 3) {
+    createButton.disabled = true;
+    createButton.textContent = "Maximum 3 Websites Reached";
+  } else {
+    createButton.disabled = false;
+    createButton.textContent = "Create My Website";
+  }
+}
+
+async function loadWebsites() {
+
+  websiteList.innerHTML = "<p>Loading websites...</p>";
+
+  try {
+    const snapshot = await getDoc(getWebsiteRef());
+
+    const sites = snapshot.exists()
+      ? snapshot.data().sites || []
+      : [];
+
+    renderWebsites(sites);
+
+  } catch (error) {
+    websiteList.textContent = "Could not load websites: " + error.message;
+  }
+}
+
+// Login protection
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
+    window.location.replace("./");
+    return;
+  }
+
+  currentUser = user;
+
+  document.getElementById("customerName").textContent =
+    user.displayName || "Customer";
+
+  document.getElementById("customerEmail").textContent =
+    user.email || "";
+
+  try {
+    await loadWebsites();
+    loading.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+  } catch (error) {
+    loading.textContent = "Unable to load dashboard. Please refresh.";
+  }
 });
 
-// Real Firebase Logout
+// Create website request
+
+websiteForm.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+  hideMessage();
+
+  if (!currentUser) {
+    showMessage("Please log in again.", "error");
+    return;
+  }
+
+  const websiteName =
+    document.getElementById("websiteName").value.trim();
+
+  const siteSlug =
+    document.getElementById("siteSlug").value.trim().toLowerCase();
+
+  const region =
+    document.getElementById("region").value;
+
+  if (!websiteName || !siteSlug) {
+    showMessage("Please enter all required details.", "error");
+    return;
+  }
+
+  if (!/^[a-z0-9-]+$/.test(siteSlug)) {
+    showMessage("Address name can contain only lowercase letters, numbers and hyphens.", "error");
+    return;
+  }
+
+  createButton.disabled = true;
+  createButton.textContent = "Saving Request...";
+
+  try {
+
+    const websiteRef = getWebsiteRef();
+
+    await runTransaction(db, async (transaction) => {
+
+      const snapshot = await transaction.get(websiteRef);
+
+      const sites = snapshot.exists()
+        ? snapshot.data().sites || []
+        : [];
+
+      if (sites.length >= 3) {
+        throw new Error("You have already reached the maximum limit of 3 websites.");
+      }
+
+      const duplicate = sites.some(
+        site => site.siteSlug === siteSlug
+      );
+
+      if (duplicate) {
+        throw new Error("You have already used this preferred address name.");
+      }
+
+      const newSite = {
+        websiteName: websiteName,
+        siteSlug: siteSlug,
+        region: region,
+        status: "request_saved",
+        createdAt: new Date().toISOString()
+      };
+
+      transaction.set(websiteRef, {
+        ownerUid: currentUser.uid,
+        sites: [...sites, newSite],
+        updatedAt: serverTimestamp()
+      });
+    });
+
+    websiteForm.reset();
+
+    showMessage(
+      "Your website request has been saved successfully. Moodle installation is pending server setup.",
+      "success"
+    );
+
+    await loadWebsites();
+
+  } catch (error) {
+
+    showMessage(error.message, "error");
+
+  } finally {
+
+    createButton.disabled = false;
+    createButton.textContent = "Create My Website";
+
+    const count = Number(
+      document.getElementById("siteCount").textContent
+    );
+
+    if (count >= 3) {
+      createButton.disabled = true;
+      createButton.textContent = "Maximum 3 Websites Reached";
+    }
+  }
+});
+
+// Sign out
 
 logoutButton.addEventListener("click", async () => {
 
@@ -284,30 +560,19 @@ logoutButton.addEventListener("click", async () => {
   logoutButton.textContent = "Signing Out...";
 
   try {
-
     await signOut(auth);
-
     window.location.replace("./");
-
   } catch (error) {
-
     alert("Logout failed: " + error.message);
-
     logoutButton.disabled = false;
     logoutButton.textContent = "Sign Out";
-
   }
-
 });
 
-// Demo buttons
+// Storage demo
 
 document.getElementById("storageButton").addEventListener("click", () => {
   alert("Storage purchasing will be activated after payment integration.");
-});
-
-document.getElementById("createWebsiteButton").addEventListener("click", () => {
-  alert("Automatic Moodle website creation is not connected yet.");
 });
 
 </script>
