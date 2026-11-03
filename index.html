@@ -35,66 +35,63 @@ footer{text-align:center;padding:25px;color:#667}
 <body>
 
 <header>
-  <div class="logo">RKoodle</div>
-  <nav>
-    <a href="#plans">Plans</a>
-    <a href="#account">Account</a>
-    <a href="dashboard.html">Dashboard</a>
-  </nav>
+<div class="logo">RKoodle</div>
+<nav>
+<a href="#plans">Plans</a>
+<a href="#account">Account</a>
+<a href="dashboard.html">Dashboard</a>
+</nav>
 </header>
 
 <section class="hero">
-  <h1>Your LMS. Your Cloud.</h1>
-  <p>Launch and manage your own learning platform with RKoodle.</p>
+<h1>Your LMS. Your Cloud.</h1>
+<p>Launch and manage your own learning platform with RKoodle.</p>
 </section>
 
 <div class="container" id="plans">
+<div class="plans">
+<div class="plan">
+<h2>Free Plan</h2>
+<div class="price">₹0</div>
+<p>5 GB Storage</p>
+<p>Explore RKoodle</p>
+</div>
 
-  <div class="plans">
-    <div class="plan">
-      <h2>Free Plan</h2>
-      <div class="price">₹0</div>
-      <p>5 GB Storage</p>
-      <p>Explore RKoodle</p>
-    </div>
+<div class="plan">
+<h2>Pro Plan</h2>
+<div class="price">$50/year</div>
+<p>20 GB Storage</p>
+<p>For growing institutions</p>
+</div>
+</div>
 
-    <div class="plan">
-      <h2>Pro Plan</h2>
-      <div class="price">$50/year</div>
-      <p>20 GB Storage</p>
-      <p>For growing institutions</p>
-    </div>
-  </div>
+<div class="account" id="account">
+<div class="tabs">
+<button id="signupTab" class="active" type="button">Sign Up</button>
+<button id="signinTab" type="button">Sign In</button>
+</div>
 
-  <div class="account" id="account">
+<form id="signupForm">
+<h2>Create Your Account</h2>
+<input id="fullName" type="text" placeholder="Full Name" required>
+<input id="signupEmail" type="email" placeholder="Email Address" required>
+<input id="signupPassword" type="password" placeholder="Create Password (minimum 6 characters)" minlength="6" required>
+<button class="action" id="signupButton" type="submit">Create Account</button>
+</form>
 
-    <div class="tabs">
-      <button id="signupTab" class="active" type="button">Sign Up</button>
-      <button id="signinTab" type="button">Sign In</button>
-    </div>
+<form id="signinForm" class="hidden">
+<h2>Welcome Back</h2>
+<input id="signinEmail" type="email" placeholder="Email Address" required>
+<input id="signinPassword" type="password" placeholder="Password" required>
+<button class="action" id="signinButton" type="submit">Sign In</button>
+</form>
 
-    <form id="signupForm">
-      <h2>Create Your Account</h2>
-      <input id="fullName" type="text" placeholder="Full Name" required>
-      <input id="signupEmail" type="email" placeholder="Email Address" required>
-      <input id="signupPassword" type="password" placeholder="Create Password (minimum 6 characters)" minlength="6" required>
-      <button class="action" id="signupButton" type="submit">Create Account</button>
-    </form>
+<div id="message" role="status"></div>
 
-    <form id="signinForm" class="hidden">
-      <h2>Welcome Back</h2>
-      <input id="signinEmail" type="email" placeholder="Email Address" required>
-      <input id="signinPassword" type="password" placeholder="Password" required>
-      <button class="action" id="signinButton" type="submit">Sign In</button>
-    </form>
-
-    <div id="message" role="status"></div>
-
-    <button id="logoutButton" class="action hidden" type="button" style="margin-top:12px">
-      Sign Out
-    </button>
-
-  </div>
+<button id="logoutButton" class="action hidden" type="button" style="margin-top:12px">
+Sign Out
+</button>
+</div>
 </div>
 
 <footer>© 2026 RKoodle. Your LMS. Your Cloud.</footer>
@@ -104,25 +101,34 @@ footer{text-align:center;padding:25px;color:#667}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  onAuthStateChanged,
-  signOut
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+updateProfile,
+onAuthStateChanged,
+signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDf20ZFbqmc9kjUbzT8H36WYUKLRI6i_t4",
-  authDomain: "rkoodle.firebaseapp.com",
-  projectId: "rkoodle",
-  storageBucket: "rkoodle.firebasestorage.app",
-  messagingSenderId: "526883526247",
-  appId: "1:526883526247:web:24979b028769dae25066c2"
+apiKey: "AIzaSyDf20ZFbqmc9kjUbzT8H36WYUKLRI6i_t4",
+authDomain: "rkoodle.firebaseapp.com",
+projectId: "rkoodle",
+storageBucket: "rkoodle.firebasestorage.app",
+messagingSenderId: "526883526247",
+appId: "1:526883526247:web:24979b028769dae25066c2"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const signupForm = document.getElementById("signupForm");
 const signinForm = document.getElementById("signinForm");
@@ -132,122 +138,130 @@ const signinButton = document.getElementById("signinButton");
 const logoutButton = document.getElementById("logoutButton");
 
 function showMessage(text, success = false) {
-  message.textContent = text;
-  message.style.color = success ? "green" : "crimson";
+message.textContent = text;
+message.style.color = success ? "green" : "crimson";
 }
 
 function readableError(error) {
-  const errors = {
-    "auth/email-already-in-use": "Email already registered. Please sign in.",
-    "auth/invalid-email": "Please enter a valid email.",
-    "auth/weak-password": "Password must contain at least 6 characters.",
-    "auth/invalid-credential": "Incorrect email or password.",
-    "auth/too-many-requests": "Too many attempts. Try again later.",
-    "auth/network-request-failed": "Internet connection problem. Try again."
-  };
-  return errors[error.code] || error.message;
+const errors = {
+"auth/email-already-in-use": "Email already registered. Please sign in.",
+"auth/invalid-email": "Please enter a valid email.",
+"auth/weak-password": "Password must contain at least 6 characters.",
+"auth/invalid-credential": "Incorrect email or password.",
+"auth/too-many-requests": "Too many attempts. Try again later.",
+"auth/network-request-failed": "Internet connection problem. Try again."
+};
+return errors[error.code] || error.message;
 }
 
-// Signup and Signin tabs
+async function ensureCustomerRecord(user, customerName) {
+const customerRef = doc(db, "customers", user.uid);
+const customerSnapshot = await getDoc(customerRef);
+
+if (!customerSnapshot.exists()) {
+await setDoc(customerRef, {
+name: customerName || user.displayName || "Customer",
+email: user.email,
+plan: "free",
+region: "EU",
+status: "active",
+storageLimit: 5,
+createdAt: serverTimestamp()
+});
+}
+}
 
 document.getElementById("signupTab").onclick = () => {
-  signupForm.classList.remove("hidden");
-  signinForm.classList.add("hidden");
-  document.getElementById("signupTab").classList.add("active");
-  document.getElementById("signinTab").classList.remove("active");
-  showMessage("");
+signupForm.classList.remove("hidden");
+signinForm.classList.add("hidden");
+document.getElementById("signupTab").classList.add("active");
+document.getElementById("signinTab").classList.remove("active");
+showMessage("");
 };
 
 document.getElementById("signinTab").onclick = () => {
-  signinForm.classList.remove("hidden");
-  signupForm.classList.add("hidden");
-  document.getElementById("signinTab").classList.add("active");
-  document.getElementById("signupTab").classList.remove("active");
-  showMessage("");
+signinForm.classList.remove("hidden");
+signupForm.classList.add("hidden");
+document.getElementById("signinTab").classList.add("active");
+document.getElementById("signupTab").classList.remove("active");
+showMessage("");
 };
 
-// Create Account
-
 signupForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
+event.preventDefault();
 
-  signupButton.disabled = true;
-  showMessage("Creating your account...", true);
+signupButton.disabled = true;
+showMessage("Creating your account...", true);
 
-  try {
-    const name = document.getElementById("fullName").value.trim();
-    const email = document.getElementById("signupEmail").value.trim();
-    const password = document.getElementById("signupPassword").value;
+try {
+const name = document.getElementById("fullName").value.trim();
+const email = document.getElementById("signupEmail").value.trim();
+const password = document.getElementById("signupPassword").value;
 
-    const result = await createUserWithEmailAndPassword(auth, email, password);
+const result = await createUserWithEmailAndPassword(auth, email, password);
 
-    await updateProfile(result.user, {
-      displayName: name
-    });
-
-    showMessage("Account created successfully! Redirecting to Dashboard...", true);
-
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1000);
-
-  } catch (error) {
-    showMessage(readableError(error));
-    signupButton.disabled = false;
-  }
+await updateProfile(result.user, {
+displayName: name
 });
 
-// Login
+await ensureCustomerRecord(result.user, name);
+
+showMessage("Account created and customer record saved! Redirecting...", true);
+
+setTimeout(() => {
+window.location.href = "dashboard.html";
+}, 1200);
+
+} catch (error) {
+showMessage(readableError(error));
+signupButton.disabled = false;
+}
+});
 
 signinForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
+event.preventDefault();
 
-  signinButton.disabled = true;
-  showMessage("Signing in...", true);
+signinButton.disabled = true;
+showMessage("Signing in...", true);
 
-  try {
-    const email = document.getElementById("signinEmail").value.trim();
-    const password = document.getElementById("signinPassword").value;
+try {
+const email = document.getElementById("signinEmail").value.trim();
+const password = document.getElementById("signinPassword").value;
 
-    await signInWithEmailAndPassword(auth, email, password);
+const result = await signInWithEmailAndPassword(auth, email, password);
 
-    showMessage("Login successful! Redirecting to Dashboard...", true);
+await ensureCustomerRecord(result.user);
 
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1000);
+showMessage("Login successful! Redirecting...", true);
 
-  } catch (error) {
-    showMessage(readableError(error));
-    signinButton.disabled = false;
-  }
+setTimeout(() => {
+window.location.href = "dashboard.html";
+}, 1000);
+
+} catch (error) {
+showMessage(readableError(error));
+signinButton.disabled = false;
+}
 });
-
-// Check existing login
 
 onAuthStateChanged(auth, (user) => {
+const currentPage = window.location.pathname;
 
-  const currentPage = window.location.pathname;
-
-  if (user && currentPage.endsWith("/index.html")) {
-    window.location.href = "dashboard.html";
-  }
-
-  if (user && currentPage.endsWith("/rkoodle/")) {
-    window.location.href = "dashboard.html";
-  }
-
+if (user && (
+currentPage.endsWith("/index.html") ||
+currentPage.endsWith("/rkoodle/")
+)) {
+window.location.href = "dashboard.html";
+}
 });
 
-// Sign Out
-
 logoutButton.addEventListener("click", async () => {
-  try {
-    await signOut(auth);
-    showMessage("You have signed out.", true);
-  } catch (error) {
-    showMessage(readableError(error));
-  }
+try {
+await signOut(auth);
+showMessage("You have signed out.", true);
+} catch (error) {
+showMessage(readableError(error));
+}
 });
 
 </script>
