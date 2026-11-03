@@ -6,21 +6,25 @@
 <title>RKoodle - Your LMS, Your Cloud</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f4f6ff;color:#172554}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6ff;color:#172554}
 header{background:white;padding:18px 7%;display:flex;justify-content:space-between;align-items:center}
 .logo{font-size:26px;font-weight:bold;color:#4338ca}
-nav a{margin-left:15px;text-decoration:none;color:#333}
+nav a{margin-left:18px;text-decoration:none;color:#333}
 .hero{text-align:center;padding:65px 15px;background:linear-gradient(135deg,#312e81,#6366f1);color:white}
 .hero h1{font-size:38px}
-.btn{padding:12px 22px;background:#4338ca;color:white;border:0;border-radius:7px;cursor:pointer}
-.hero .btn{background:white;color:#4338ca}
+.btn{padding:13px 22px;background:#4338ca;color:white;border:0;border-radius:7px;cursor:pointer;font-weight:bold}
+.hero .btn{background:white;color:#4338ca;text-decoration:none;display:inline-block}
 section{padding:35px 15px;text-align:center}
 .cards{display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
 .card{background:white;padding:25px;border-radius:12px;width:280px;box-shadow:0 4px 15px #ddd}
 .price{font-size:28px;font-weight:bold;color:#4338ca}
-.account{max-width:400px;margin:20px auto;background:white;padding:25px;border-radius:12px;box-shadow:0 4px 15px #ddd}
+.account{max-width:420px;margin:20px auto;background:white;padding:28px;border-radius:14px;box-shadow:0 4px 20px #ddd}
+.tabs{display:flex;background:#eef0ff;padding:5px;border-radius:8px;margin-bottom:22px}
+.tabs button{width:50%;padding:12px;border:0;border-radius:6px;cursor:pointer;background:transparent;font-weight:bold}
+.tabs button.active{background:#4338ca;color:white}
 input{width:100%;padding:13px;margin:9px 0;border:1px solid #ccc;border-radius:6px}
-.account button{width:100%;margin-top:10px}
+.account .btn{width:100%;margin-top:12px}
+.hidden{display:none}
 footer{background:#172554;color:white;padding:22px;text-align:center}
 </style>
 </head>
@@ -30,8 +34,7 @@ footer{background:#172554;color:white;padding:22px;text-align:center}
 <div class="logo">RKoodle</div>
 <nav>
 <a href="#plans">Plans</a>
-<a href="#signup">Sign Up</a>
-<a href="#login">Login</a>
+<a href="#account">Account</a>
 </nav>
 </header>
 
@@ -39,7 +42,7 @@ footer{background:#172554;color:white;padding:22px;text-align:center}
 <h1>Your LMS. Your Cloud.</h1>
 <p>Create Your Own Learning Platform</p>
 <p>Start your own online learning website with RKoodle.</p>
-<a class="btn" href="#signup">Get Started</a>
+<a class="btn" href="#account">Get Started</a>
 </div>
 
 <section id="plans">
@@ -50,38 +53,58 @@ footer{background:#172554;color:white;padding:22px;text-align:center}
 <div class="price">₹0</div>
 <p>5 GB Storage</p>
 <p>Your own LMS platform</p>
-<a href="#signup" class="btn">Get Started</a>
 </div>
 <div class="card">
 <h3>Pro Plan</h3>
 <div class="price">$50/year</div>
 <p>20 GB Storage</p>
 <p>Extra storage available</p>
-<a href="#signup" class="btn">Choose Pro</a>
 </div>
 </div>
 </section>
 
-<section id="signup">
+<section id="account">
 <div class="account">
-<h2>Create Your Account</h2>
-<input type="text" placeholder="Your Name">
+<h2>Welcome to RKoodle</h2>
+<p>Create an account or sign in</p>
+
+<div class="tabs">
+<button id="signupTab" class="active" onclick="showSignup()">Sign Up</button>
+<button id="signinTab" onclick="showSignin()">Sign In</button>
+</div>
+
+<div id="signupForm">
+<input type="text" placeholder="Full Name">
 <input type="email" placeholder="Email Address">
 <input type="password" placeholder="Create Password">
-<button class="btn" onclick="alert('Demo only: Account creation will be enabled in a later step.')">Sign Up</button>
-<p>Already have an account? <a href="#login">Login</a></p>
+<button class="btn" onclick="alert('Demo only. Account creation is not active yet.')">Create Account</button>
 </div>
-</section>
 
-<section id="login">
-<div class="account">
-<h2>Customer Login</h2>
+<div id="signinForm" class="hidden">
 <input type="email" placeholder="Email Address">
 <input type="password" placeholder="Password">
-<button class="btn" onclick="alert('Demo only: Login will be enabled in a later step.')">Login</button>
+<button class="btn" onclick="alert('Demo only. Login is not active yet.')">Sign In</button>
+</div>
+
 </div>
 </section>
 
 <footer>© 2026 RKoodle | Your LMS. Your Cloud.</footer>
+
+<script>
+function showSignup(){
+document.getElementById('signupForm').classList.remove('hidden');
+document.getElementById('signinForm').classList.add('hidden');
+document.getElementById('signupTab').classList.add('active');
+document.getElementById('signinTab').classList.remove('active');
+}
+function showSignin(){
+document.getElementById('signinForm').classList.remove('hidden');
+document.getElementById('signupForm').classList.add('hidden');
+document.getElementById('signinTab').classList.add('active');
+document.getElementById('signupTab').classList.remove('active');
+}
+</script>
+
 </body>
 </html>
