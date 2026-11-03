@@ -49,6 +49,7 @@ footer{text-align:center;padding:25px;color:#667}
 </section>
 
 <div class="container" id="plans">
+
 <div class="plans">
 <div class="plan">
 <h2>Free Plan</h2>
@@ -66,6 +67,7 @@ footer{text-align:center;padding:25px;color:#667}
 </div>
 
 <div class="account" id="account">
+
 <div class="tabs">
 <button id="signupTab" class="active" type="button">Sign Up</button>
 <button id="signinTab" type="button">Sign In</button>
@@ -88,9 +90,6 @@ footer{text-align:center;padding:25px;color:#667}
 
 <div id="message" role="status"></div>
 
-<button id="logoutButton" class="action hidden" type="button" style="margin-top:12px">
-Sign Out
-</button>
 </div>
 </div>
 
@@ -105,7 +104,6 @@ getAuth,
 createUserWithEmailAndPassword,
 signInWithEmailAndPassword,
 updateProfile,
-onAuthStateChanged,
 signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -135,7 +133,6 @@ const signinForm = document.getElementById("signinForm");
 const message = document.getElementById("message");
 const signupButton = document.getElementById("signupButton");
 const signinButton = document.getElementById("signinButton");
-const logoutButton = document.getElementById("logoutButton");
 
 function showMessage(text, success = false) {
 message.textContent = text;
@@ -149,16 +146,29 @@ const errors = {
 "auth/weak-password": "Password must contain at least 6 characters.",
 "auth/invalid-credential": "Incorrect email or password.",
 "auth/too-many-requests": "Too many attempts. Try again later.",
-"auth/network-request-failed": "Internet connection problem. Try again."
+"auth/network-request-failed": "Internet connection problem. Try again.",
+"permission-denied": "Firestore permission denied. Please check Firestore Rules.",
+"unavailable": "Database is temporarily unavailable. Please try again."
 };
-return errors[error.code] || error.message;
+
+return errors[error.code] || error.message || "An unexpected error occurred.";
 }
 
 async function ensureCustomerRecord(user, customerName) {
+
 const customerRef = doc(db, "customers", user.uid);
+
+showMessage("Checking customer record...", true);
+
 const customerSnapshot = await getDoc(customerRef);
 
-if (!customerSnapshot.exists()) {
+if (customerSnapshot.exists()) {
+showMessage("Customer record already exists.", true);
+return;
+}
+
+showMessage("Creating customer record...", true);
+
 await setDoc(customerRef, {
 name: customerName || user.displayName || "Customer",
 email: user.email,
@@ -168,7 +178,14 @@ status: "active",
 storageLimit: 5,
 createdAt: serverTimestamp()
 });
+
+const verifySnapshot = await getDoc(customerRef);
+
+if (!verifySnapshot.exists()) {
+throw new Error("Customer record could not be verified in Firestore.");
 }
+
+showMessage("Customer record saved successfully.", true);
 }
 
 document.getElementById("signupTab").onclick = () => {
@@ -191,14 +208,19 @@ signupForm.addEventListener("submit", async (event) => {
 event.preventDefault();
 
 signupButton.disabled = true;
-showMessage("Creating your account...", true);
 
 try {
 const name = document.getElementById("fullName").value.trim();
 const email = document.getElementById("signupEmail").value.trim();
 const password = document.getElementById("signupPassword").value;
 
-const result = await createUserWithEmailAndPassword(auth, email, password);
+showMessage("Creating account...", true);
+
+const result = await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
 
 await updateProfile(result.user, {
 displayName: name
@@ -206,14 +228,15 @@ displayName: name
 
 await ensureCustomerRecord(result.user, name);
 
-showMessage("Account created and customer record saved! Redirecting...", true);
+showMessage("Account and Firestore record created successfully. Redirecting...", true);
 
 setTimeout(() => {
-window.location.href = "dashboard.html";
+window.location.assign("./dashboard.html");
 }, 1200);
 
 } catch (error) {
-showMessage(readableError(error));
+console.error("Signup error:", error);
+showMessage("Signup/Firestore error: " + readableError(error));
 signupButton.disabled = false;
 }
 });
@@ -222,45 +245,31 @@ signinForm.addEventListener("submit", async (event) => {
 event.preventDefault();
 
 signinButton.disabled = true;
-showMessage("Signing in...", true);
 
 try {
 const email = document.getElementById("signinEmail").value.trim();
 const password = document.getElementById("signinPassword").value;
 
-const result = await signInWithEmailAndPassword(auth, email, password);
+showMessage("Signing in...", true);
+
+const result = await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
 
 await ensureCustomerRecord(result.user);
 
-showMessage("Login successful! Redirecting...", true);
+showMessage("Login and Firestore verification successful. Redirecting...", true);
 
 setTimeout(() => {
-window.location.href = "dashboard.html";
-}, 1000);
+window.location.assign("./dashboard.html");
+}, 1200);
 
 } catch (error) {
-showMessage(readableError(error));
+console.error("Login/Firestore error:", error);
+showMessage("Login/Firestore error: " + readableError(error));
 signinButton.disabled = false;
-}
-});
-
-onAuthStateChanged(auth, (user) => {
-const currentPage = window.location.pathname;
-
-if (user && (
-currentPage.endsWith("/index.html") ||
-currentPage.endsWith("/rkoodle/")
-)) {
-window.location.href = "dashboard.html";
-}
-});
-
-logoutButton.addEventListener("click", async () => {
-try {
-await signOut(auth);
-showMessage("You have signed out.", true);
-} catch (error) {
-showMessage(readableError(error));
 }
 });
 
